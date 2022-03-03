@@ -1,2 +1,2 @@
 # spotify-top-track-history
-An improvement on the "On Repeat" playlist Spotify creates for its users, this creates a playlist called "On Repeat Forever" which continuously adds your top tracks from the past and your current ones, updating it as often as you run the script. 
+An improvement on the "On Repeat" playlist Spotify creates for its users. This program creates a rolling playlist called "On Repeat Forever," which adds your top tracks from the past when the playlist is created, then continuously appends your current top tracks as time goes on. Updating of the playlist occurs as often as you run the script. Simply fill out your credentials in the credentials.py file then run $ python3 main.py.
