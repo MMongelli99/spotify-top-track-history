@@ -6,7 +6,6 @@
 
 client_id = ''
 client_secret = ''
-username = '' # Your official Spotify account username.
 
 # Then go to the Spotify developer app's Settings and set the field called 'Redirect URIs' with this value:
 redirect_uri = 'http://localhost:8080/'
