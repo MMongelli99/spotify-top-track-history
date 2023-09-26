@@ -1,4 +1,5 @@
 import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 import credentials
 from dataclasses import dataclass
 
@@ -44,33 +45,36 @@ def initialize_playlist(user: str, name: str, description: str, image: bytes) ->
 def main():
     
     # 'playlist-modify-private' needed to access user's data for the first time
-    # Look in todo.txt about making this work for other people 
-    scope = 'playlist-modify-public, playlist-modify-private, user-top-read, ugc-image-upload' 
-    username = credentials.username
+    scope = 'playlist-modify-public, playlist-modify-private, user-top-read, ugc-image-upload'
 
     ### Authenticate to access account ###
 
-    try:
-        token = spotipy.oauth2.SpotifyOAuth(
-            client_id=credentials.client_id, 
-            client_secret=credentials.client_secret, 
-            redirect_uri=credentials.redirect_uri, 
-            scope=scope,
-            username=username
+    # Create a Spotipy object with OAuth2 authentication
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            client_id=credentials.client_id,
+            client_secret=credentials.client_secret,
+            redirect_uri=credentials.redirect_uri,
+            scope=scope,  # Specify the required permissions
         )
-    except spotipy.oauth2.SpotifyOauthError:
-        missing_credentials_errmsg = 'To fix this, please look in credentials.py and follow the instructions to fill out client_id, client_secret, and username.'
-        raise spotipy.oauth2.SpotifyOauthError(missing_credentials_errmsg)
+    )
 
-    #print(f'''
-    #client_id={credentials.client_id}, 
-    #client_secret={credentials.client_secret}, 
-    #redirect_uri={credentials.redirect_uri},
-    #scope={scope},
-    #username={username}
-    #''')
+    if sp.current_user():
+        print("You are already logged in.")
+    else:
+        print("Please follow the instructions to log in:")
+        auth_url = sp.auth_manager.get_authorize_url()
+        print(f"1. Visit this URL in your browser: {auth_url}")
+        print("2. Log in to your Spotify account.")
+        print("3. After logging in, you will be redirected to a webpage with a URL.")
+        print("4. Copy and paste the entire URL here:")
+        authorization_response = input("Enter the URL: ")
 
-    sp = spotipy.Spotify(auth_manager = token)
+        # Exchange the authorization code for an access token
+        sp.auth_manager.get_access_token(authorization_response)
+        print("You are now logged in!")
+
+    username = sp.current_user()['id']
 
     ### Create playlist (if needed) ###
 
